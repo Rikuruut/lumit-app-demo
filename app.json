@@ -1,5 +1,6 @@
 {
   "expo": {
+    "backgroundColor": "#FFFFFF",
     "name": "LumitApp_demo",
     "slug": "LumitApp_demo",
     "version": "1.0.0",

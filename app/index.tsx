@@ -8,8 +8,8 @@ export default function SplashScreen() {
     // 画面遷移のためのタイマーを設定
     useEffect(() => {
         const timer = setTimeout(() => {
-            router.replace("/home");
-        }, 10000);
+            router.replace("/(tabs)/home"); // 5秒後にホーム画面へ遷移
+        }, 5000); // 5000ミリ秒 = 5秒
         // タイマーリセット
         return () => clearTimeout(timer);
     }, []);
