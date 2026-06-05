@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: "#FFFFFF" },
+    safe: { flex: 1, backgroundColor: "#FFF8EC" },
     scroll: { flex: 1 },
     scrollContent: { padding: 16 },
 
