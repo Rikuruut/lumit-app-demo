@@ -1,9 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
-import { SafeAreaFrameContext, SafeAreaView } from 'react-native-safe-area-context';
-
-
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 
 // 問題データ
 const lessonQuestions = [
@@ -35,11 +33,31 @@ const lessonQuestions = [
 
 export default function LessonScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [correctCount,setCorrectCount] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
   const question = lessonQuestions[currentIndex];
   const total = lessonQuestions.length;
+
+  // 次の問題 or リザルト画面へ
+  const handleNext = () => {
+    const newCorrect = selected === question.answer
+        ? correctCount + 1
+        : correctCount;
+
+    if (currentIndex + 1 < total) {
+        setCorrectCount(newCorrect);
+        setCurrentIndex(currentIndex + 1);
+        setSelected(null);
+        setIsAnswered(false);
+    } else {
+        router.replace({
+            pathname: "/result",
+            params: { correct: newCorrect, total: total }
+        });
+    }
+};
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -72,7 +90,6 @@ export default function LessonScreen() {
         ))}
       </View>
 
-
       {/* 送信ボタン */}
       <TouchableOpacity
         style={styles.submitButton}
@@ -82,6 +99,7 @@ export default function LessonScreen() {
       >
         <Text style={styles.submitText}>こたえる</Text>
       </TouchableOpacity>
+
       {/* フィードバック（回答後に表示） */}
       {isAnswered && (
         <View style={[
@@ -96,8 +114,16 @@ export default function LessonScreen() {
               ? "順番通りに実行するのがプログラムの基本だよ！"
               : `正解は「${question.answer}」だよ！`}
           </Text>
+
+          {/* つぎへボタン */}
+          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+            <Text style={styles.nextText}>
+              {currentIndex + 1 < total ? "つぎへ →" : "けっかをみる"}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
+
     </SafeAreaView>
   );
 }
@@ -108,15 +134,6 @@ const styles = StyleSheet.create({
   progressText: { fontSize: 16, fontFamily: "monospace", color: "#888" },
   questionBox: { flex: 1, justifyContent: "center", padding: 24 },
   questionText: { fontSize: 20, fontWeight: "bold", color: "#333", textAlign: "center" },
-  submitButton: {
-    margin: 16,
-    backgroundColor: "#F5A623",
-    borderRadius: 14,
-    padding: 16,
-    alignItems: "center",
-    borderBottomWidth: 4,
-    borderBottomColor: "#D98512",
-  },
 
   choicesArea: { paddingHorizontal: 16, gap: 12 },
   choiceButton: {
@@ -135,6 +152,17 @@ const styles = StyleSheet.create({
   },
   choiceText: { fontSize: 16, color: "#333" },
 
+  submitButton: {
+    margin: 16,
+    backgroundColor: "#F5A623",
+    borderRadius: 14,
+    padding: 16,
+    alignItems: "center",
+    borderBottomWidth: 4,
+    borderBottomColor: "#D98512",
+  },
+  submitText: { fontSize: 18, fontWeight: "bold", color: "#FFFFFF" },
+
   feedback: {
     margin: 16,
     padding: 16,
@@ -145,6 +173,14 @@ const styles = StyleSheet.create({
   feedbackText: { fontSize: 18, fontWeight: "bold", marginBottom: 6 },
   feedbackComment: { fontSize: 14, color: "#555" },
 
-
-  submitText: { fontSize: 18, fontWeight: "bold", color: "#FFFFFF" },
+  nextButton: {
+    marginTop: 12,
+    backgroundColor: "#F5A623",
+    borderRadius: 12,
+    padding: 12,
+    alignItems: "center",
+    borderBottomWidth: 3,
+    borderBottomColor: "#D98512",
+  },
+  nextText: { fontSize: 16, fontWeight: "bold", color: "#FFFFFF" },
 });
